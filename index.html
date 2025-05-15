@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS | Portafolio de Desarrollador</title>
+    <style>
+        :root {
+            --primary: #00a2ff;
+            --secondary: #0058b8;
+            --dark: #0a192f;
+            --light: #e6f1ff;
+            --accent: #64ffda;
+            --warning: #ffbb00;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #1c3b57);
+            color: var(--light);
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Efectos JARVIS */
+        .jarvis-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 162, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 162, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .jarvis-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 162, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 162, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .jarvis-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .circle {
+            position: absolute;
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 4s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+        
+        /* Elementos de diseño */
+        header {
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .status {
+            display: inline-block;
+            height: 10px;
+            width: 10px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        nav {
+            margin-top: 30px;
+            position: relative;
+            z-index: 20;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 5px 0;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .hero-text {
+            max-width: 600px;
+        }
+        
+        .hero-text h4 {
+            color: var(--accent);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .hero-text h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-text h1 span {
+            color: var(--primary);
+        }
+        
+        .hero-text p {
+            color: #8892b0;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .cta-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .cta-btn:hover {
+            background: rgba(0, 162, 255, 0.1);
+        }
+        
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .jarvis-interface {
+            width: 300px;
+            height: 300px;
+            position: relative;
+        }
+        
+        .jarvis-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            animation: rotate 10s linear infinite;
+        }
+        
+        .jarvis-inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+            animation: rotate-reverse 15s linear infinite;
+        }
+        
+        .jarvis-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            animation: pulse-core 2s infinite alternate;
+        }
+        
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes rotate-reverse {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+        
+        @keyframes pulse-core {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .section-title {
+            font-size: 24px;
+            color: var(--light);
+            margin-bottom: 40px;
+            padding-top: 80px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .section-title::before {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 1px;
+            background-color: var(--primary);
+            margin-right: 15px;
+        }
+        
+        .section-title::after {
+            content: "";
+            display: block;
+            flex: 1;
+            height: 1px;
+            background-color: rgba(0, 162, 255, 0.2);
+            margin-left: 15px;
+        }
+        
+        .skills-container {
+            position: relative;
+            z-index: 20;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .skill-item {
+            background: rgba(10, 25, 47, 0.7);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .skill-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scan 2s infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .skill-icon {
+            font-size: 30px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            position: relative;
+            z-index: 20;
+            margin-bottom: 60px;
+        }
+        
+        .project-card {
+            background: rgba(10, 25, 47, 0.7);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 5px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .project-icon {
+            color: var(--primary);
+            font-size: 24px;
+        }
+        
+        .project-links a {
+            color: var(--light);
+            margin-left: 15px;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        
+        .project-links a:hover {
+            color: var(--primary);
+        }
+        
+        .project-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .project-description {
+            color: #8892b0;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tech-tag {
+            font-size: 12px;
+            color: var(--accent);
+        }
+        
+        .contact-container {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+        
+        .contact-container p {
+            color: #8892b0;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-icon {
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .terminal {
+            position: relative;
+            z-index: 20;
+            background: rgba(10, 25, 47, 0.9);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 60px 0;
+            width: 100%;
+            max-width: 800px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .terminal-header {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+        
+        .terminal-title {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #8892b0;
+        }
+        
+        .terminal-body {
+            height: 200px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .terminal-line {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .terminal-prompt {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .terminal-command {
+            color: var(--light);
+        }
+        
+        .terminal-output {
+            color: #8892b0;
+            padding-left: 15px;
+            border-left: 1px solid rgba(0, 162, 255, 0.2);
+            margin: 5px 0 10px 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #8892b0;
+            border-top: 1px solid rgba(0, 162, 255, 0.2);
+            position: relative;
+            z-index: 20;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        /* Animación de tipeo para efecto terminal */
+        .typing {
+            overflow: hidden;
+            border-right: 2px solid var(--primary);
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 8s steps(20, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary) }
+        }
+        
+        /* Estilos adicionales para stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            position: relative;
+            z-index: 20;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: rgba(10, 25, 47, 0.7);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #8892b0;
+            font-size: 14px;
+        }
+        
+        /* Líneas de datos estilo HUD */
+        .data-lines {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 10px;
+            color: var(--primary);
+            opacity: 0.6;
+            z-index: 15;
+            pointer-events: none;
+        }
+        
+        .data-lines p {
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Efectos visuales JARVIS -->
+    <div class="jarvis-overlay"></div>
+    <div class="jarvis-grid"></div>
+    <div class="jarvis-circles"></div>
+    <div class="data-lines">
+        <p>SISTEMA ONLINE</p>
+        <p>CONEXIONES SEGURAS: 6</p>
+        <p>ESTADO DE NÚCLEO: ÓPTIMO</p>
+        <p>NIVEL DE ENERGÍA: 98.2%</p>
+        <p>ANÁLISIS EN CURSO...</p>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                Juan Pablo Andrada <span>// Técnico en Programación</span>
+                <div class="status"></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#skills">Habilidades</a></li>
+                    <li><a href="#projects">Proyectos</a></li>
+                    <li><a href="#about">Sobre Mí</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section id="home" class="hero">
+            <div class="hero-text">
+                <h4>Bienvenido, señor.</h4>
+                <h1 class="typing">Soy <span>Juan  Andrada</span></h1>
+                <p>Desarrollo soluciones digitales que conectan la tecnología con las personas. Apasionado por la programación, la innovación y los proyectos que transforman realidades."</p>
+                <p>Ubicación: Alta Gracia, Córdoba, Argentina</p>
+                <p>Año académico: Último año (2025)</p>
+                <a href="#contact" class="cta-btn">Iniciar Comunicación</a>
+            </div>
+            <div class="hero-visual">
+                <div class="jarvis-interface">
+                    <div class="jarvis-ring"></div>
+                    <div class="jarvis-inner-ring"></div>
+                    <div class="jarvis-core"></div>
+                </div>
+            </div>
+        </section>
+        
+        <h2 id="about" class="section-title">Sobre Mí</h2>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dot dot-red"></div>
+                <div class="terminal-dot dot-yellow"></div>
+                <div class="terminal-dot dot-green"></div>
+                <div class="terminal-title">developer@jarvis: ~/about</div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">></span>
+                    <span class="terminal-command">cat about_me.txt</span>
+                </div>
+                <div class="terminal-output">
+                    Soy estudiante avanzado de la carrera Técnico en Programación en el Instituto Superior Manuel de Falla, donde he desarrollado habilidades técnicas y creativas para afrontar desafíos reales en el desarrollo de software.<br><br>
+                    Me apasiona crear experiencias interactivas y accesibles para los usuarios, utilizando herramientas modernas y buenas prácticas. Me destaco en el liderazgo de proyectos, el aprendizaje constante y el enfoque colaborativo.<br><br>
+                    Intereses: Inteligencia artificial aplicada, Desarrollo web interactivo, Herramientas que impactan en la comunidad, Diseño de interfaces accesibles.
+                </div>
+            </div>
+        </div>
+        
+        <h2 id="projects" class="section-title">Proyectos Destacados</h2>
+        <div class="projects-container">
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">🧠</div>
+                </div>
+                <h3 class="project-title">Jarvitur - Asistente Turístico de Alta Gracia</h3>
+                <p class="project-description">Plataforma turística interactiva con un chatbot que informa sobre destinos, clima, emergencias, galería de fotos, dedicatorias y más.</p>
+                <div class="project-tech">
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">API de OpenAI</span>
+                    <span class="tech-tag">gTTS</span>
+                    <span class="tech-tag">Reconocimiento de voz</span>
+                    <span class="tech-tag">localStorage</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">🗺️</div>
+                </div>
+                <h3 class="project-title">Plataforma Web para Comercios de Alta Gracia (en desarrollo)</h3>
+                <p class="project-description">Plataforma digital para más de 700 comercios, permitiendo ofrecer y gestionar beneficios entre asociados.</p>
+                <div class="project-tech">
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">MySQL</span>
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                </div>
+            </div>
+        </div>
+        
+        <h2 id="skills" class="section-title">Habilidades Técnicas</h2>
+        <div class="skills-container">
+            <div class="skill-item">
+                <div class="skill-icon">🖥️</div>
+                <h3>Frontend</h3>
+                <p>HTML, CSS, JavaScript, React (en formación)</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-icon">🎯</div>
+                <h3>Lógica y funciones</h3>
+                <p>Algoritmos, estructuras de datos, condicionales, arrays, funciones</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-icon">🔊</div>
+                <h3>Interactividad</h3>
+                <p>OpenAI API, gTTS, reconocimiento de voz</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-icon">🗄️</div>
+                <h3>Datos</h3>
+                <p>Formularios, validación, localStorage, MySQL (en formación)</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-icon">🎨</div>
+                <h3>UI/UX</h3>
+                <p>Diseño responsivo, experiencia de usuario, animaciones básicas</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-icon">🧪</div>
+                <h3>Herramientas</h3>
+                <p>Visual Studio Code, Git, Node.js</p>
+            </div>
+        </div>
+        
+        <h2 id="contact" class="section-title">Iniciar Comunicación</h2>
+        <div class="contact-container">
+            <p>¿Interesado en colaborar en un proyecto o simplemente quieres conversar sobre tecnología? Mi sistema de comunicación está listo para recibir tu mensaje.</p>
+            <a href="mailto:juanpablo@example.com" class="cta-btn">Enviar Mensaje</a>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <span>juanpablo@example.com</span>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <span>+123 456 7890</span>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <span>Alta Gracia, Córdoba, Argentina</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 Juan Pablo Andrada · Todos los sistemas operativos · v2.5.0</p>
+        </footer>
+    </div>
+    
+    <!-- Add audio element -->
+    <audio id="background-audio" src="Iron-Man-2-Bienvenido-Senor.mp3" preload="auto"></audio>
+    
+    <script>
+        // Play audio on first click anywhere on the page
+        document.addEventListener('click', function playAudioOnce() {
+            const audio = document.getElementById('background-audio');
+            audio.play();
+            document.removeEventListener('click', playAudioOnce); // Remove listener after first click
+        }, { once: true });
+
+        // Crear círculos del efecto JARVIS
+        const createCircles = () => {
+            const container = document.querySelector('.jarvis-circles');
+            
+            for (let i = 0; i < 5; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+                
+                // Posiciones aleatorias
+                const size = Math.random() * 300 + 100;
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                circle.style.left = `${left}%`;
+                circle.style.top = `${top}%`;
+                
+                // Retardo aleatorio para la animación
+                circle.style.animationDelay = `${Math.floor(Math.random() * 5)}s`;
+
+                container.appendChild(circle);
+            }
+        };
+
+        window.onload = createCircles;
+    </script>
+</body>
